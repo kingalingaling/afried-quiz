@@ -60,6 +60,7 @@ const submitButton = document.getElementById("submit");
 //intialize quiz
 const quiz = new Quiz(questions);
 let userAnswers = []; //store answers
+let selectedOptionIndex = null;
 let score = 0;
 let timeLeft = 0;
 let timer;
@@ -82,11 +83,24 @@ const displayCurrentQuestion = () => {
     });
     optionsElement.appendChild(li);
   });
+
   startTimer();
+
+  optionsElement.querySelectorAll("li").forEach((li, index) => {
+    li.classList.remove("selected");
+    li.addEventListener("click", () => selectOption(index));
+  });
 };
 
 const selectOption = (optionIndex) => {
-//   clearTimeout(timer);
+  if (selectedOptionIndex !== null) {
+    optionsElement
+      .querySelectorAll("li")
+      [selectedOptionIndex].classList.remove("selected");
+  }
+
+  selectedOptionIndex = optionIndex;
+  optionsElement.querySelectorAll("li")[optionIndex].classList.add("selected");
   userAnswers[quiz.currentQuestionIndex] = optionIndex;
   quiz.selectOption(optionIndex);
   //   nextButton.style.display = "block";
@@ -96,30 +110,51 @@ const selectOption = (optionIndex) => {
   });
 };
 
+const showAnswer = (answerIndex) => {
+  optionsElement.querySelectorAll("li").forEach((li, index) => {
+    if (index === answerIndex) {
+      li.classList.add("correct");
+    } else {
+      li.classList.add("wrong");
+    }
+  });
+};
+
 nextButton.addEventListener("click", () => {
   clearTimeout(timer);
-  if (quiz.getNextQuestion()) {
-    displayCurrentQuestion();
-    if (quiz.currentQuestionIndex === quiz.questions.length - 1) {
-      submitButton.style.display = "block";
-      nextButton.style.display = "none";
-    } else {
-      submitButton.style.display = "none";
-    }
+  if (selectedOptionIndex !== null) {
+    const correctIndex = questions[quiz.currentQuestionIndex].answerIndex;
+    showAnswer(correctIndex);
   }
-  //   else {
-  //     questionElement.textContent = `Your Score is ${score}`;
-  //     optionsElement.innerHTML = "";
-  //   }
+
+  setTimeout(() => {
+    selectedOptionIndex = null;
+    if (quiz.getNextQuestion()) {
+      displayCurrentQuestion();
+      if (quiz.currentQuestionIndex === quiz.questions.length - 1) {
+        // submitButton.style.display = "block";
+        // nextButton.style.display = "none";
+        nextButton.innerHTML = "See total Score";
+      }
+    } else {
+      calculateScore();
+      questionElement.textContent = `Your Score is ${score}`;
+      optionsElement.innerHTML = "";
+      nextButton.style.display = "none";
+    }
+  }, 2000); //show correct answer for 2 seconds
+  optionsElement
+    .querySelectorAll("li")
+    [questions[quiz.currentQuestionIndex].answerIndex].classList.add("correct");
 });
 
-const submitQuiz = () => {
-  clearTimeout(timer);
-  calculateScore();
-  questionElement.textContent = `Your Score is ${score}`;
-  optionsElement.innerHTML = "";
-  submitButton.style.display = "none";
-};
+// const submitQuiz = () => {
+//   clearTimeout(timer);
+//   calculateScore();
+//   questionElement.textContent = `Your Score is ${score}`;
+//   optionsElement.innerHTML = "";
+//   submitButton.style.display = "none";
+// };
 
 const calculateScore = () => {
   score = 0;
@@ -129,24 +164,6 @@ const calculateScore = () => {
     }
   });
 };
-
-// const resolveAfter1Second = () => {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve("resolved");
-//     }, 1000);
-//   });
-// };
-
-// const asyncTimer = async (x) => {
-//   timeElement.innerHTML = x;
-//   while (x > 0) {
-//     let result = await resolveAfter1Second();
-//     x--;
-//     timeElement.innerHTML = x;
-//   }
-// //   selectOption()
-// };
 
 const updateTimer = () => {
   timerElement.textContent = timeLeft;
@@ -166,16 +183,11 @@ const startTimer = () => {
         calculateScore();
         questionElement.textContent = `Time up!!! \n Your Score is ${score}`;
         optionsElement.innerHTML = "";
-        nextButton.style.display='none'
+        nextButton.style.display = "none";
         submitButton.style.display = "block";
       }
     }
   }, 1000); //update every second
-//   updateTimer();
-//   timeLeft--;
-//   if (timeLeft >= 0) {
-//     setTimeout(startTimer, 1000); //call function after 1 second
-//   }
 };
 
 displayCurrentQuestion();
