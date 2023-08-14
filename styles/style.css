@@ -58,6 +58,9 @@ body {
 #question {
     padding: 10px 0;
 }
+#restart {
+    display: none;
+}
 #options li {
     padding: 10px;
     border: 1px solid gray;

@@ -55,7 +55,6 @@ const questionElement = document.getElementById("question");
 const timerElement = document.getElementById("timer");
 const optionsElement = document.getElementById("options");
 const nextButton = document.getElementById("next");
-const submitButton = document.getElementById("submit");
 
 //intialize quiz
 const quiz = new Quiz(questions);
@@ -91,6 +90,8 @@ const displayCurrentQuestion = () => {
     li.addEventListener("click", () => selectOption(index));
   });
 };
+
+
 
 const selectOption = (optionIndex) => {
   if (selectedOptionIndex !== null) {
