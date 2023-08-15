@@ -2,14 +2,13 @@ const questionElement = document.getElementById("question");
 const timerElement = document.getElementById("timer");
 const optionsElement = document.getElementById("options");
 const nextButton = document.getElementById("next");
-const restartElement = document.getElementById('restart');
+const restartElement = document.getElementById("restart");
 
 let userAnswers = []; //store answers
 let selectedOptionIndex = null;
 let score = 0;
 let timeLeft = 0;
 let timer;
-let proxy = this
 
 export default class userInteraction {
   constructor(quiz) {
@@ -20,6 +19,26 @@ export default class userInteraction {
 
   updateTimer() {
     timerElement.textContent = timeLeft;
+  }
+
+  startTimer() {
+    this.updateTimer();
+    timer = setInterval(() => {
+      timeLeft--;
+      this.updateTimer();
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        //when timeup, move to next question
+        if (this.quiz.getNextQuestion()) {
+          this.displayCurrentQuestion();
+        } else {
+          this.calculateScore();
+          questionElement.textContent = `Time up!!! \n Your Score is ${score}`;
+          optionsElement.innerHTML = "";
+          nextButton.style.display = "none";
+        }
+      }
+    }, 1000); //update every second
   }
 
   displayCurrentQuestion() {
@@ -47,6 +66,53 @@ export default class userInteraction {
       li.classList.remove("selected");
       li.addEventListener("click", () => this.selectOption(index));
     });
+
+    // nextButton.addEventListener("click", () => {
+    //   clearTimeout(this.timer);
+    //   if (selectedOptionIndex !== null) {
+    //     const correctIndex =
+    //       this.quiz.questions[this.quiz.currentQuestionIndex].answerIndex;
+    //     this.showAnswer(correctIndex);
+    //   }
+
+    //   setTimeout(() => {
+    //     this.selectedOptionIndex = null;
+    //     if (this.quiz.getNextQuestion()) {
+    //       this.displayCurrentQuestion();
+    //       if (
+    //         this.quiz.currentQuestionIndex ===
+    //         this.quiz.questions.length - 1
+    //       ) {
+    //         // submitButton.style.display = "block";
+    //         // nextButton.style.display = "none";
+    //         nextButton.innerHTML = "See total Score";
+    //       }
+    //     } else {
+    //       this.calculateScore();
+    //       questionElement.textContent = `Your Score is ${score}`;
+    //       optionsElement.innerHTML = "";
+    //       // restartElement.style.display='block';
+    //       this.quiz.resetCurrentQuestion();
+    //       score = 0;
+    //       nextButton.style.display = "none";
+    //     }
+    //   }, 2000); //show correct answer for 2 seconds
+    //   optionsElement
+    //     .querySelectorAll("li")
+    //     [
+    //       this.quiz.questions[this.quiz.currentQuestionIndex].answerIndex
+    //     ].classList.add("correct");
+    // });
+  }
+
+  showAnswer(answerIndex) {
+    optionsElement.querySelectorAll("li").forEach((li, index) => {
+      if (index === answerIndex) {
+        li.classList.add("correct");
+      } else {
+        li.classList.add("wrong");
+      }
+    });
   }
 
   selectOption(optionIndex) {
@@ -69,48 +135,7 @@ export default class userInteraction {
     });
   }
 
-  showAnswer(answerIndex) {
-    optionsElement.querySelectorAll("li").forEach((li, index) => {
-      if (index === answerIndex) {
-        li.classList.add("correct");
-      } else {
-        li.classList.add("wrong");
-      }
-    });
-  }
-
-  nextButtonEventHandler() {
-    clearTimeout(this.timer);
-    if (selectedOptionIndex !== null) {
-      const correctIndex = this.quiz.questions[this.quiz.currentQuestionIndex].answerIndex;
-      this.showAnswer(correctIndex);
-    }
-
-    setTimeout(() => {
-      this.selectedOptionIndex = null;
-      if (this.quiz.getNextQuestion()) {
-        this.displayCurrentQuestion();
-        if (this.quiz.currentQuestionIndex === this.quiz.questions.length - 1) {
-          // submitButton.style.display = "block";
-          // nextButton.style.display = "none";
-          nextButton.innerHTML = "See total Score";
-        }
-      } else {
-        this.calculateScore();
-        questionElement.textContent = `Your Score is ${score}`;
-        optionsElement.innerHTML = "";
-        restartElement.style.display='block';
-        this.quiz.resetCurrentQuestion()
-        score = 0;
-        nextButton.style.display = "none";
-      }
-    }, 2000); //show correct answer for 2 seconds
-    optionsElement
-      .querySelectorAll("li")
-      [this.quiz.questions[this.quiz.currentQuestionIndex].answerIndex].classList.add(
-        "correct"
-      );
-  }
+  // nextButton.addEventListener()
 
   calculateScore() {
     score = 0;
@@ -121,23 +146,38 @@ export default class userInteraction {
     });
   }
 
-  startTimer() {
-    this.updateTimer();
-    timer = setInterval(() => {
-      timeLeft--;
-      this.updateTimer();
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        //when timeup, move to next question
-        if (this.quiz.getNextQuestion()) {
-          this.displayCurrentQuestion();
-        } else {
-          this.calculateScore();
-          questionElement.textContent = `Time up!!! \n Your Score is ${score}`;
-          optionsElement.innerHTML = "";
-          nextButton.style.display = "none";
-        }
-      }
-    }, 1000); //update every second
-  }
 }
+
+// export function nextButtonEventHandler(ui) {
+//   clearTimeout(ui.timer);
+//   if (selectedOptionIndex !== null) {
+//     const correctIndex =
+//       ui.quiz.questions[ui.quiz.currentQuestionIndex].answerIndex;
+//     this.showAnswer(correctIndex);
+//   }
+
+//   setTimeout(() => {
+//     ui.selectedOptionIndex = null;
+//     if (ui.quiz.getNextQuestion()) {
+//       ui.displayCurrentQuestion();
+//       if (ui.quiz.currentQuestionIndex === ui.quiz.questions.length - 1) {
+//         // submitButton.style.display = "block";
+//         // nextButton.style.display = "none";
+//         nextButton.innerHTML = "See total Score";
+//       }
+//     } else {
+//       ui.calculateScore();
+//       questionElement.textContent = `Your Score is ${score}`;
+//       optionsElement.innerHTML = "";
+//       // restartElement.style.display='block';
+//       ui.quiz.resetCurrentQuestion();
+//       score = 0;
+//       nextButton.style.display = "none";
+//     }
+//   }, 2000); //show correct answer for 2 seconds
+//   optionsElement
+//     .querySelectorAll("li")
+//     [ui.quiz.questions[ui.quiz.currentQuestionIndex].answerIndex].classList.add(
+//       "correct"
+//     );
+// }
