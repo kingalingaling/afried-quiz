@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles/style.css" />
   </head>
   <body>
-    <script src="quiz.js" defer></script>
     <section class="container">
       <div class="head">
         <h3>Afried Quiz App</h3>
@@ -17,7 +16,7 @@
         </div>
       </div>
       <div style="width: 100%; ">
-        <h1 id="question">Question 1</h1>
+        <h1 id="question"></h1>
         <ul id="options"></ul>
       </div>
       <div class="bottom">
@@ -25,10 +24,12 @@
         <button id="next">
             Next
         </button>
-        <button id="submit" onclick='submitQuiz(); return false'>
-            See Total Score
+        <button id="restart" onclick='restartQuiz(); return false'>
+            Restart
         </button>
       </div>
     </section>
+
+    <script type="module" src="./scripts/app.js" defer></script>
   </body>
 </html>
