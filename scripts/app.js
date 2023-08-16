@@ -1,4 +1,4 @@
-import userInteraction from "./userInteraction.js";
+import userInteraction from "./user-interaction.js";
 import Quiz from "./quiz.js";
 // import { nextButtonEventHandler } from "./userInteraction.js";
 
@@ -23,80 +23,38 @@ const questions = [
 const quiz = new Quiz(questions);
 const ui = new userInteraction(quiz);
 
-const nextButton = document.getElementById('next')
-const questionElement = document.getElementById("question");
-// const timerElement = document.getElementById("timer");
-const optionsElement = document.getElementById("options");
+const nextButton = document.getElementById('next');
+// const questionElement = document.getElementById("question");
+// // const timerElement = document.getElementById("timer");
+// const optionsElement = document.getElementById("options");
 // next.addEventListener('click', nextButtonEventHandler(ui))
 
-const nextButtonHandler = (ui) => {
-  clearTimeout(ui.timer);
-  if (ui.selectedOptionIndex !== null) {
-    const correctIndex =
-      ui.quiz.questions[ui.quiz.currentQuestionIndex].answerIndex;
-    ui.showAnswer(correctIndex);
-  }
-
-  setTimeout(() => {
-    ui.selectedOptionIndex = null;
-    if (ui.quiz.getNextQuestion()) {
-      ui.displayCurrentQuestion();
-      if (
-        ui.quiz.currentQuestionIndex ===
-        ui.quiz.questions.length - 1
-      ) {
-        // submitButton.style.display = "block";
-        // nextButton.style.display = "none";
-        nextButton.innerHTML = "See total Score";
-      }
-    } else {
-      ui.calculateScore();
-      questionElement.textContent = `Your Score is ${score}`;
-      optionsElement.innerHTML = "";
-      // restartElement.style.display='block';
-      ui.quiz.resetCurrentQuestion();
-      score = 0;
-      nextButton.style.display = "none";
-    }
-  }, 2000); //show correct answer for 2 seconds
-  optionsElement
-    .querySelectorAll("li")
-    [
-      ui.quiz.questions[ui.quiz.currentQuestionIndex].answerIndex
-    ].classList.add("correct");
-}
-
-ui.displayCurrentQuestion()
-nextButton.addEventListener('click', nextButtonHandler(ui))
-
-
-
-// nextButton.addEventListener("click", (ui) => {
-//   clearTimeout(this.timer);
-//   if (selectedOptionIndex !== null) {
+// const nextButtonHandler = (ui) => {
+//   clearTimeout(ui.timer);
+//   if (ui.selectedOptionIndex !== null) {
 //     const correctIndex =
-//       this.quiz.questions[this.quiz.currentQuestionIndex].answerIndex;
-//     this.showAnswer(correctIndex);
+//       ui.quiz.questions[ui.quiz.currentQuestionIndex].answerIndex;
+//     ui.showAnswer(correctIndex);
 //   }
 
 //   setTimeout(() => {
-//     this.selectedOptionIndex = null;
-//     if (this.quiz.getNextQuestion()) {
-//       this.displayCurrentQuestion();
+//     ui.selectedOptionIndex = null;
+//     if (ui.quiz.getNextQuestion()) {
+//       ui.displayCurrentQuestion();
 //       if (
-//         this.quiz.currentQuestionIndex ===
-//         this.quiz.questions.length - 1
+//         ui.quiz.currentQuestionIndex ===
+//         ui.quiz.questions.length - 1
 //       ) {
 //         // submitButton.style.display = "block";
 //         // nextButton.style.display = "none";
 //         nextButton.innerHTML = "See total Score";
 //       }
 //     } else {
-//       this.calculateScore();
+//       ui.calculateScore();
 //       questionElement.textContent = `Your Score is ${score}`;
 //       optionsElement.innerHTML = "";
 //       // restartElement.style.display='block';
-//       this.quiz.resetCurrentQuestion();
+//       ui.quiz.resetCurrentQuestion();
 //       score = 0;
 //       nextButton.style.display = "none";
 //     }
@@ -104,6 +62,10 @@ nextButton.addEventListener('click', nextButtonHandler(ui))
 //   optionsElement
 //     .querySelectorAll("li")
 //     [
-//       this.quiz.questions[this.quiz.currentQuestionIndex].answerIndex
+//       ui.quiz.questions[ui.quiz.currentQuestionIndex].answerIndex
 //     ].classList.add("correct");
-// });
+// }
+
+ui.displayCurrentQuestion()
+nextButton.addEventListener('click', ui.nextButtonHandler())
+// nextButton.addEventListener('click', nextButtonHandler(ui))
